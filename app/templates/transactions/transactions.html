@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content%}
+<h1>Transactions</h1>
+
+<h3>Create transaction</h3>
+<div>
+    <a href="{{ url_for('transaction.transaction', tr_type='minus') }}">Minus</a> |
+    <a href="{{ url_for('transaction.transaction', tr_type='plus') }}">Plus</a>
+</div>
+
+<h3>Your transactions</h3>
+{% if transactions %}
+<table class="table table-sm">
+    <thead class="thead-dark">
+        <tr>
+            <th>Date</th>
+            <th class="text-right">Amount</th>
+            <th>Account</th>
+            <th>Party</th>
+            <th>Group</th>
+            <th>Category</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tr in transactions %}
+            <tr {{ 'class=table-success' if not tr.minus }}>
+                <td>{{ tr.fancy_date() }}</td>
+                <td class="text-right">{{ tr.fancy_amount() }} <small>{{ tr.account.currency.currency }}</small></td>
+                <td>{{ tr.account.account }}</td>
+                <td>{{ tr.party.party }}</td>
+                <td>{{ tr.group.group }}</td>
+                <td>{{ tr.category.category }}</td>
+                <td>
+                    <a href="{{ url_for('transaction.transaction_edit', tr_id=tr.id)}}">edit</a> |
+                    <a href="{{ url_for('transaction.transaction_delete', tr_id=tr.id)}}">delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endblock %}

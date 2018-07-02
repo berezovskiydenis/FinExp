@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "tmplts/_form.html" as frm %}
+
+{% block content%}
+<h1>Categories</h1>
+
+<div>
+    <a href="{{ url_for('reference.category') }}">Create category</a>
+</div>
+
+{% if categories %}
+<h2>Categories</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Active</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for category in categories %}
+        <tr>
+            <td>{{ category.category }}</td>
+            <td>{{ category.is_active }}</td>
+            <td><a href="{{ url_for('reference.category_edit', category_id=category.id) }}">edit</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,67 @@
+{% import "tmplts/_flashing.html" as flsh %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+        crossorigin="anonymous">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" type="text/css">
+
+    <title>Financial Expert</title>
+</head>
+
+<body>
+    {% if current_user.is_authenticated %}
+    <!-- NAVBAR -->
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" id="NavBar">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}">Home page</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('account.accounts') }}">Accounts</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('reference.groups') }}">Groups</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('reference.categories') }}">Categories</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('reference.parties') }}">Parties</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('transaction.transactions') }}">Transactions</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('transaction.transfers') }}">Transfers</a></li>
+            </ul>
+            <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+        </div>
+    </nav>
+    {% endif %}
+
+    <div class="container">
+    {{ flsh.render_flash() }}
+    {% block content %}{% endblock %}
+    </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+        crossorigin="anonymous"></script>
+
+    <!-- jqueryUI -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <script>
+        $(function () {
+            $("#datepicker").datepicker({ dateFormat: "dd.mm.yy" });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "tmplts/_form.html" as frm %}
+
+{% block content%}
+<h1>Groups</h1>
+
+<div>
+    <a href="{{ url_for('reference.group') }}">Create group</a>
+</div>
+
+{% if groups %}
+<h2>Groups</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Group</th>
+            <th>Active</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for group in groups %}
+        <tr>
+            <td>{{ group.group }}</td>
+            <td>{{ group.is_active }}</td>
+            <td><a href="{{ url_for('reference.group_edit', group_id=group.id) }}">edit</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endblock %}

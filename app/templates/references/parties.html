@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "tmplts/_form.html" as frm %}
+
+{% block content%}
+<h1>Party</h1>
+
+<div>
+    <a href="{{ url_for('reference.party') }}">Create party</a>
+</div>
+
+{% if parties %}
+<h2>Party</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Party</th>
+            <th>Active</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for party in parties %}
+            <tr>
+                <td>{{ party.party }}</td>
+                <td>{{ party.is_active }}</td>
+                <td><a href="{{ url_for('reference.party_edit', party_id=party.id) }}">edit</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endblock %}

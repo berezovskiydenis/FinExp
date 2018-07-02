@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Accounts and Statistics -->
+<div class="row">
+    <!-- Active accounts -->
+    <div class="col">
+        <h4>Accounts</h4>
+        <table class="table table-sm table-borderless">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Account name</th>
+                    <th class="text-right">Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                    <tr>
+                        <td>{{ account.account }}</td>
+                        <td class="text-right">
+                            {{ account.fancy_balance() }} <small>{{ account.currency.currency }}</small>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- Statistics -->
+    <div class="col">
+        <h4>Statistics</h4>
+        <table class="table table-sm table-borderless">
+            <thead class="thead-dark">
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Income</td>
+                    <td>{{ inc }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div>
+        <a href="{{ url_for('transaction.transaction', tr_type='minus') }}">Minus</a>
+    </div>
+</div>
+<div class="row">
+    <div>
+        <a href="{{ url_for('transaction.transaction', tr_type='plus') }}">Plus</a>
+    </div>
+</div>
+<div class="row">
+    <div>
+        <a href="{{ url_for('transaction.transfer') }}">Transfer</a>
+    </div>
+</div>
+
+
+{% endblock %}

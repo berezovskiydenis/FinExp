@@ -1,0 +1,37 @@
+{% macro render_form(form) %}
+<div class="mx-auto" style="width: 400px;">
+
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+
+        {% for field in form %}
+
+            {% if field.type not in ["SubmitField", "CSRFTokenField"] %}
+
+                    <div class="form-group">
+
+                        {% if field.type == "BooleanField" %}
+                            <div class="form-check">
+                                {{ field(class="form-check-input") }} {{ field.label(class="form-check-label") }}
+                            </div>
+                        {% else %}
+                            {{ field.label }}
+                            {{ field }}
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+
+                    </div>
+
+            {% endif %}
+
+        {% endfor %}
+
+        {{ form.submit() }}
+
+    </form>
+
+</div>
+{% endmacro %}

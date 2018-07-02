@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content%}
+<h1>Accounts</h1>
+
+<div><a href="{{ url_for('account.new_account') }}">Create new account</a></div>
+
+<h3>Accounts table</h3>
+{% if accounts %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Created</th>
+            <th>Account</th>
+            <th>Balance</th>
+            <th>IsActive</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for account in accounts %}
+            <tr>
+                <td>{{ account.fancy_created() }}</td>
+                <td>{{ account.account }}</td>
+                <td>{{ account.fancy_balance() }} {{ account.currency.currency_code }}</td>
+                <td>{{ account.is_active }}</td>
+                <td><a href="{{ url_for('account.account', account_id=account.id) }}">edit</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <div><p>You don't have an account. <a href="{{ url_for('account.new_account') }}">Create one.</a></p></div>
+{% endif %}
+{% endblock %}

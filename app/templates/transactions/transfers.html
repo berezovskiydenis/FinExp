@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content%}
+<h1>Transfers</h1>
+
+<h3>Create transfer</h3>
+<div>
+    <a href="{{ url_for('transaction.transfer') }}">Transfer</a>
+</div>
+
+<h3>Your transfers</h3>
+{% if transfers %}
+<table class="table table-sm">
+    <thead class="thead-dark">
+        <tr>
+            <th>Date</th>
+            <th>From</th>
+            <th class="text-right">Amount</th>
+            <th>Coefficient</th>
+            <th>To</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tr in transfers %}
+            <tr>
+                <td>{{ tr.fancy_date() }}</td>
+                <td>{{ tr.from_account.account }}</td>
+                <td class="text-right">{{ tr.fancy_amount() }}</td>
+                <td>{{ tr.coef }}</td>
+                <td>{{ tr.to_account }}</td>
+
+                <!-- <td>
+                    <a href="{{ url_for('transaction.transaction_edit', tr_id=tr.id)}}">edit</a> |
+                    <a href="{{ url_for('transaction.transaction_delete', tr_id=tr.id)}}">delete</a>
+                </td>
+                 -->
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endblock %}
