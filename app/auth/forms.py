@@ -6,22 +6,14 @@ from wtforms.validators import (DataRequired, EqualTo, Length, Regexp,
                                 ValidationError)
 
 
-def ascii_username(form, field):
-    # Only ascii letters are allowed for username
-    for i in field.data:
-        if i not in string.ascii_letters:
-            raise ValidationError(
-                    'Only latin letters are allowed for name')
-
-
 class AuthForm(FlaskForm):
-    username = StringField(
-            label="Name",
-            validators=[DataRequired(), Length(min=1, max=128),
-                        ascii_username],
-            render_kw={'placeholder': 'Enter your name',
+    phone = StringField(
+            label="Mobile phone",
+            validators=[DataRequired(), Length(min=1, max=20),
+                        Regexp("[0-9]{11}")],
+            render_kw={'placeholder': 'Enter your phone',
                        'class': 'form-control'},
-            id="nameInput"
+            id="phoneInput"
         )
     password = PasswordField(
             label='Password',
@@ -50,18 +42,12 @@ class RegisterForm(AuthForm):
 
 
 class EditUserForm(FlaskForm):
-    username = StringField(
-            label="Name",
-            validators=[DataRequired(), Length(min=1, max=128),
-                        ascii_username],
-            render_kw={'placeholder': 'Enter your name',
-                       'class': 'form-control'},
-            id="nameInput"
-        )
     phone = StringField(
             label="Mobile phone",
-            validators=[DataRequired(), Regexp("[0-9]{11}")],
-            render_kw={"placeholder": "Phone number", 'class': 'form-control'},
+            validators=[DataRequired(), Length(min=1, max=20),
+                        Regexp("[0-9]{11}")],
+            render_kw={'placeholder': 'Enter your phone',
+                       'class': 'form-control'},
             id="phoneInput"
         )
     submit = SubmitField("Save", render_kw={'class': 'btn btn-primary'})

@@ -263,8 +263,8 @@ def transfer():
                 coef=float(form.coef.data),
                 user_id=current_user.id
             )
-        f = Account.query.get(tf.from_account)
-        t = Account.query.get(tf.to_account)
+        f = Account.query.get(tf.from_account_id)
+        t = Account.query.get(tf.to_account_id)
 
         f.balance = f.balance - tf.amount
         t.balance = t.balance + tf.amount * tf.coef

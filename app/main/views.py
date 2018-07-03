@@ -34,7 +34,7 @@ def get_income_statistics():
     stat = db.session.query(Transaction).filter(
             Transaction.user_id == current_user.id,
             Transaction.minus == False,
-            Transaction.tdate >= datetime.today().replace(day=1)
+            Transaction.tdate >= datetime.today().replace(day=1).date()
         ).all()
 
     current_month = sum(t.amount for t in stat)

@@ -34,11 +34,8 @@ class ExtraFields(object):
 
 class User(db.Model, BaseFields, ExtraFields, UserMixin):
     __tablename__ = 'users'
-    # Username to uniquely identify users. Used to login to system.
-    username = db.Column(db.String(128), index=True, nullable=False,
-                         unique=True)
-    phone = db.Column(db.String(20))
-    email = db.Column(db.String(128))
+    # Every user identidied by mobile phone number
+    phone = db.Column(db.String(20), index=True, nullable=False, unique=True)
     password_hash = db.Column(db.String(128), nullable=False)
     last_seen = db.Column(db.DateTime(), nullable=False,
                           default=datetime.utcnow)
@@ -49,7 +46,6 @@ class User(db.Model, BaseFields, ExtraFields, UserMixin):
     parties = db.relationship('Party', backref='owner', lazy='dynamic')
     transactions = db.relationship('Transaction', backref='owner',
                                    lazy='dynamic')
-    transfers = db.relationship('Transfer', backref='owner', lazy='dynamic')
 
     def set_password(self, new_password):
         self.password_hash = generate_password_hash(new_password)
@@ -146,9 +142,9 @@ class Transfer(db.Model, BaseFields):
     amount = db.Column(db.Float(), default=0.0, nullable=False)
     coef = db.Column(db.Float(), default=1.0, nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
-
-    from_account = db.relationship("Account", foreign_keys=[from_account_id])
-    to_account_id = db.relationship("Account", foreign_keys=[to_account_id])
+    # References
+    from_account = db.relationship('Account', foreign_keys=[from_account_id])
+    to_account = db.relationship('Account', foreign_keys=[to_account_id])
 
     def fancy_date(self):
         return datetime.strftime(self.tdate, '%d.%m.%Y')

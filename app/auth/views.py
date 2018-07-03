@@ -19,12 +19,12 @@ def sign_up():
 
     if form.validate_on_submit():
         # Lookup for an existing user
-        user_exist = User.query.filter_by(username=form.username.data).first()
+        user_exist = User.query.filter_by(phone=form.phone.data).first()
         if user_exist:
-            flash('This name is already registered', 'warning')
+            flash('This phone number is already registered', 'warning')
         else:
             user = User()
-            user.username = form.username.data
+            user.phone = form.phone.data
             user.set_password(form.password.data)
             try:
                 db.session.add(user)
@@ -46,7 +46,7 @@ def sign_in():
     form = SignInForm()
 
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(phone=form.phone.data).first()
 
         if user and user.check_password(form.password.data):
             # User login succesfully
@@ -54,7 +54,7 @@ def sign_in():
             set_visit(user)
             return redirect(url_for('main.index'))
 
-        flash("Invalid name or password")
+        flash("Invalid phone number or password")
     return render_template('auth/signin.html', form=form)
 
 
