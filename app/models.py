@@ -1,8 +1,10 @@
+from datetime import datetime
+
 from app import db, login_manager
 from flask_login import UserMixin
-from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.ext.declarative import declared_attr
-from datetime import datetime
+from sqlalchemy.ext.hybrid import hybrid_property
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 class BaseFields(object):
@@ -40,12 +42,19 @@ class User(db.Model, BaseFields, ExtraFields, UserMixin):
     last_seen = db.Column(db.DateTime(), nullable=False,
                           default=datetime.utcnow)
     # References
-    accounts = db.relationship('Account', backref='owner', lazy='dynamic')
-    categories = db.relationship('Category', backref='owner', lazy='dynamic')
-    groups = db.relationship('Group', backref='owner', lazy='dynamic')
-    parties = db.relationship('Party', backref='owner', lazy='dynamic')
+    accounts = db.relationship('Account', backref='owner', lazy='dynamic',
+                               cascade="save-update, merge, delete")
+    categories = db.relationship('Category', backref='owner', lazy='dynamic',
+                                 cascade="save-update, merge, delete")
+    groups = db.relationship('Group', backref='owner', lazy='dynamic',
+                             cascade="save-update, merge, delete")
+    parties = db.relationship('Party', backref='owner', lazy='dynamic',
+                              cascade="save-update, merge, delete")
     transactions = db.relationship('Transaction', backref='owner',
-                                   lazy='dynamic')
+                                   lazy='dynamic',
+                                   cascade="save-update, merge, delete")
+    transfers = db.relationship('Transfer', backref='owner', lazy='dynamic',
+                                cascade="save-update, merge, delete")
 
     def set_password(self, new_password):
         self.password_hash = generate_password_hash(new_password)
@@ -59,14 +68,21 @@ class Account(db.Model, BaseFields, ExtraFields):
     __tablename__ = 'accounts'
     account = db.Column(db.String(128), index=True, nullable=False)
     balance = db.Column(db.Float(), default=0.0, nullable=False)
-    currency_id = db.Column(db.Integer(), db.ForeignKey('currency.id'))
-    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
+    currency_id = db.Column(db.Integer(), db.ForeignKey('currency.id'),
+                            nullable=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'),
+                        nullable=False)
     # References
     transactions = db.relationship('Transaction', backref='account',
                                    lazy='dynamic')
 
-    def fancy_balance(self):
-        return '{:,.2f}'.format(self.balance)
+    @hybrid_property
+    def full_balance(self):
+        return '{:,.2f} {}'.format(self.balance, self.currency.currency)
+
+    @hybrid_property
+    def full_account(self):
+        return "{} ({})".format(self.account, self.currency.currency)
 
 
 class Currency(db.Model, BaseFields):
@@ -89,7 +105,8 @@ class Group(db.Model, BaseFields, ExtraFields):
     """Names of income and expenses. Used as general name."""
     __tablename__ = 'groups'
     group = db.Column(db.String(128), index=True, nullable=False)
-    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'),
+                        nullable=False)
     # References
     transactions = db.relationship('Transaction', backref='group',
                                    lazy='dynamic')
@@ -99,7 +116,8 @@ class Category(db.Model, BaseFields, ExtraFields):
     """Subname for income and expenses. Used as subname for groups."""
     __tablename__ = 'categories'
     category = db.Column(db.String(128), index=True, nullable=False)
-    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'),
+                        nullable=False)
     # References
     transactions = db.relationship('Transaction', backref='category',
                                    lazy='dynamic')
@@ -108,7 +126,8 @@ class Category(db.Model, BaseFields, ExtraFields):
 class Party(db.Model, BaseFields, ExtraFields):
     __tablename__ = 'parties'
     party = db.Column(db.String(128), index=True, nullable=False)
-    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'),
+                        nullable=False)
     # References
     transactions = db.relationship('Transaction', backref='party',
                                    lazy='dynamic')
@@ -120,35 +139,47 @@ class Transaction(db.Model, BaseFields):
     amount = db.Column(db.Float(), default=0.0, nullable=False)
     # If minus=True then it is expense
     minus = db.Column(db.Boolean(), default=True, nullable=False)
-    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
-    account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
-    group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'))
-    category_id = db.Column(db.Integer(), db.ForeignKey('categories.id'))
-    party_id = db.Column(db.Integer(), db.ForeignKey('parties.id'))
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'),
+                        nullable=False)
+    account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'),
+                           nullable=False)
+    group_id = db.Column(db.Integer(), db.ForeignKey('groups.id'),
+                         nullable=False)
+    category_id = db.Column(db.Integer(), db.ForeignKey('categories.id'),
+                            nullable=False)
+    party_id = db.Column(db.Integer(), db.ForeignKey('parties.id'),
+                         nullable=False)
     comment = db.Column(db.String(128))
 
+    @hybrid_property
     def fancy_date(self):
         return datetime.strftime(self.tdate, '%d.%m.%Y')
 
+    @hybrid_property
     def fancy_amount(self):
         return '{:,.2f}'.format(self.amount)
 
 
 class Transfer(db.Model, BaseFields):
     __tablename__ = 'transfers'
-    from_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
-    to_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    from_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'),
+                                nullable=False)
+    to_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'),
+                              nullable=False)
     tdate = db.Column(db.Date(), nullable=False)
     amount = db.Column(db.Float(), default=0.0, nullable=False)
     coef = db.Column(db.Float(), default=1.0, nullable=False)
-    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id'),
+                        nullable=False)
     # References
     from_account = db.relationship('Account', foreign_keys=[from_account_id])
     to_account = db.relationship('Account', foreign_keys=[to_account_id])
 
+    @hybrid_property
     def fancy_date(self):
         return datetime.strftime(self.tdate, '%d.%m.%Y')
 
+    @hybrid_property
     def fancy_amount(self):
         return '{:,.2f}'.format(self.amount)
 
