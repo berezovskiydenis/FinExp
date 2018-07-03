@@ -17,9 +17,7 @@
                 {% for account in accounts %}
                     <tr>
                         <td>{{ account.account }}</td>
-                        <td class="text-right">
-                            {{ account.fancy_balance() }} <small>{{ account.currency.currency }}</small>
-                        </td>
+                        <td class="text-right">{{ account.full_balance }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -31,15 +29,17 @@
         <table class="table table-sm table-borderless">
             <thead class="thead-dark">
                 <tr>
-                    <th></th>
-                    <th></th>
+                    <th>Group</th>
+                    <th>Amount</th>
                 </tr>
             </thead>
             <tbody>
+                {% for i in inc %}
                 <tr>
-                    <td>Income</td>
-                    <td>{{ inc }}</td>
+                    <td>{{ i[0] }}</td>
+                    <td>{{ i[1] }}</td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

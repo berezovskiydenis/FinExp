@@ -1,6 +1,6 @@
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
-from sqlalchemy import asc
+from sqlalchemy import asc, func
 from sqlalchemy.exc import IntegrityError
 
 from app import db
@@ -37,5 +37,15 @@ def get_income_statistics():
             Transaction.tdate >= datetime.today().replace(day=1).date()
         ).all()
 
-    current_month = sum(t.amount for t in stat)
-    return current_month
+    stat = db.session.query(
+            Transaction.category_id, func.sum(Transaction.amount)
+        ).filter(
+            Transaction.user_id == current_user.id,
+            Transaction.minus == False,
+            Transaction.tdate >= datetime.today().replace(day=1).date()
+        ).group_by(
+            Transaction.category_id
+        ).all()
+
+    # current_month = [() for x in stat]
+    return stat

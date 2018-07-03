@@ -26,8 +26,8 @@
     <tbody>
         {% for tr in transactions %}
             <tr {{ 'class=table-success' if not tr.minus }}>
-                <td>{{ tr.fancy_date() }}</td>
-                <td class="text-right">{{ tr.fancy_amount() }} <small>{{ tr.account.currency.currency }}</small></td>
+                <td>{{ tr.fancy_date }}</td>
+                <td class="text-right">{{ tr.fancy_amount }} <small>{{ tr.account.currency.currency }}</small></td>
                 <td>{{ tr.account.account }}</td>
                 <td>{{ tr.party.party }}</td>
                 <td>{{ tr.group.group }}</td>
