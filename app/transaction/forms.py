@@ -10,7 +10,7 @@ class TransactionForm(FlaskForm):
             validators=[DataRequired()],
             format='%d.%m.%Y',
             id='datepicker',
-            render_kw={'type': 'datetime-local', 'class': 'form-control'}
+            render_kw={'class': 'form-control'}
         )
 
     amount = DecimalField(
@@ -83,7 +83,7 @@ class TransferForm(FlaskForm):
             validators=[DataRequired()],
             format='%d.%m.%Y',
             id='datepicker',
-            render_kw={'type': 'datetime-local', 'class': 'form-control'}
+            render_kw={'class': 'form-control'}
         )
 
     amount = DecimalField(
