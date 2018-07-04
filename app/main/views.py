@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app import db
 from app.main import bp
-from app.models import Account, Transaction, Group, Category
+from app.models import Account, Transaction, Category
 
 from datetime import datetime
 
@@ -32,7 +32,8 @@ def get_accounts():
 
 def get_income_statistics():
     stat = db.session.query(
-            Transaction.category_id, func.sum(Transaction.amount)
+            Transaction.category_id,
+            func.sum(Transaction.amount)
         ).filter(
             Transaction.user_id == current_user.id,
             Transaction.minus == False,
